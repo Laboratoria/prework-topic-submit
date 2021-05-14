@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "bin": {
+    "submit": "./index.js"
+  },
   "scripts": {
     "test": "jest *.spec.js --coverage",
     "lint": "eslint ."
