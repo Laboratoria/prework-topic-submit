@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const prompts = require('prompts');
 const kleur = require('kleur');
 const cliSpinners = require('cli-spinners');
@@ -27,21 +29,25 @@ const questions = [
   },
 ];
 
-(async () => {
-  // const response = await prompts(questions);
-  await prompts(questions);
+function main() {
+  prompts(questions)
+    .then((response) => {
+      if (response.email && response.password) {
+        let i = 0;
+        const msg = kleur.bold().italic('Registrando progreso');
+        const spinner = cliSpinners.dots;
+        const interval = setInterval(() => {
+          const { frames } = spinner;
+          // eslint-disable-next-line no-plusplus
+          logUpdate(`${frames[i = ++i % frames.length]} ${msg}`);
+        }, spinner.interval);
 
-  let i = 0;
-  const msg = kleur.bold().italic('Registrando progreso');
-  const spinner = cliSpinners.dots;
-  const interval = setInterval(() => {
-    const { frames } = spinner;
-    // eslint-disable-next-line no-plusplus
-    logUpdate(`${frames[i = ++i % frames.length]} ${msg}`);
-  }, spinner.interval);
+        setTimeout(() => {
+          clearInterval(interval);
+          console.log(kleur.green().bold('Listo!'));
+        }, 1500);
+      }
+    });
+}
 
-  setTimeout(() => {
-    clearInterval(interval);
-    console.log(kleur.green().bold('Listo!'));
-  }, 2000);
-})();
+main();
