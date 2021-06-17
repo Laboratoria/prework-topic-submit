@@ -2,9 +2,10 @@
 
 const prompts = require('prompts');
 const kleur = require('kleur');
-const cliSpinners = require('cli-spinners');
-const logUpdate = require('log-update');
+const path = require('path');
 const validator = require('email-validator');
+const runTests = require('./runTests');
+const { createLoader } = require('./utils');
 
 const questions = [
   {
@@ -30,24 +31,23 @@ const questions = [
 ];
 
 function main() {
-  prompts(questions)
-    .then((response) => {
-      if (response.email && response.password) {
-        let i = 0;
-        const msg = kleur.bold().italic('Registrando progreso');
-        const spinner = cliSpinners.dots;
-        const interval = setInterval(() => {
-          const { frames } = spinner;
-          // eslint-disable-next-line no-plusplus
-          logUpdate(`${frames[i = ++i % frames.length]} ${msg}`);
-        }, spinner.interval);
+  runTests((testsData) => {
+    console.log(kleur.bold().italic('Se terminó de correr los tests. A continuación completa los siguientes datos:'));
+    prompts(questions)
+      .then((response) => {
+        if (response.email && response.password) {
+          const msg = kleur.bold().italic('Registrando progreso');
+          const interval = createLoader(msg);
 
-        setTimeout(() => {
-          clearInterval(interval);
-          console.log(kleur.green().bold('Listo!'));
-        }, 1500);
-      }
-    });
+          setTimeout(() => {
+            clearInterval(interval);
+            const package = require(path.join(process.cwd(), 'package.json'));
+            console.log(package);
+            console.log(kleur.green().bold('Listo!'));
+          }, 1500);
+        }
+      });
+  });
 }
 
 main();
