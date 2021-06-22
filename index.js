@@ -4,8 +4,12 @@ const prompts = require('prompts');
 const kleur = require('kleur');
 const path = require('path');
 const validator = require('email-validator');
+
+// eslint-disable-next-line import/no-dynamic-require
+const packageData = require(path.join(process.cwd(), 'package.json'));
 const runTests = require('./runTests');
 const { createLoader } = require('./utils');
+const getToken = require('./api-service');
 
 const questions = [
   {
@@ -39,12 +43,19 @@ function main() {
           const msg = kleur.bold().italic('Registrando progreso');
           const interval = createLoader(msg);
 
-          setTimeout(() => {
-            clearInterval(interval);
-            const package = require(path.join(process.cwd(), 'package.json'));
-            console.log(package);
-            console.log(kleur.green().bold('Listo!'));
-          }, 1500);
+          getToken(response.email, response.password)
+            .then((token) => {
+              console.log('TOKEN', token);
+              setTimeout(() => {
+                // clearInterval(interval);
+                console.log(packageData);
+                console.log(kleur.green().bold('Listo!'));
+              }, 1500);
+            })
+            .catch((err) => console.log(kleur.red().bold(err.message)))
+            .finally(() => {
+              clearInterval(interval);
+            });
         }
       });
   });
