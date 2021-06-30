@@ -6,7 +6,7 @@ const path = require('path');
 const validator = require('email-validator');
 
 // eslint-disable-next-line import/no-dynamic-require
-const packageData = require(path.join(process.cwd(), 'package.json'));
+const { laboratoria } = require(path.join(process.cwd(), 'package.json'));
 const runTests = require('./runTests');
 const { createLoader } = require('./utils');
 const getToken = require('./api-service');
@@ -41,19 +41,40 @@ function main() {
       .then((response) => {
         if (response.email && response.password) {
           const msg = kleur.bold().italic('Registrando progreso');
+          /* start spinner animation */
           const interval = createLoader(msg);
 
           getToken(response.email, response.password)
             .then((token) => {
               console.log('TOKEN', token);
-              setTimeout(() => {
-                // clearInterval(interval);
-                console.log(packageData);
-                console.log(kleur.green().bold('Listo!'));
-              }, 1500);
+              const {
+                unitId,
+                partId,
+                exerciseId,
+                typeContent,
+              } = laboratoria;
+
+              const bodyRequest = {
+                unitId,
+                partId,
+                exerciseId,
+                type: typeContent,
+                progress: {
+                  testResults: {
+                    ...testsData,
+                  },
+                  updatedAt: new Date(),
+                  /* Add completedAt property only if tests passed
+                    to save in BigQuery */
+                  ...(testsData.state === 'PASS' && { completedAt: new Date() }),
+                },
+              };
+              console.log('body request: ', bodyRequest);
+              console.log(kleur.green().bold('Listo!'));
             })
             .catch((err) => console.log(kleur.red().bold(err.message)))
             .finally(() => {
+              /* stop spinner animation */
               clearInterval(interval);
             });
         }
