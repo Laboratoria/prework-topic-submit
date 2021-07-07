@@ -34,54 +34,59 @@ const questions = [
   },
 ];
 
+const buildProgress = (testsData) => {
+  const {
+    unitId,
+    partId,
+    exerciseId,
+    typeContent,
+  } = laboratoria;
+
+  const progressData = {
+    unitId,
+    partId,
+    exerciseId,
+    type: typeContent,
+    preworkType: 'redesign-prework-fe',
+    progress: {
+      testResults: {
+        ...testsData,
+      },
+      updatedAt: new Date(),
+      /* Add completedAt property only if tests passed
+          to save in BigQuery */
+      ...(testsData.state === 'PASS' && { completedAt: new Date() }),
+    },
+  };
+
+  return progressData;
+};
+
 function main() {
-  runTests((testsData) => {
-    console.log(kleur.bold().italic('Se terminó de correr los tests. A continuación completa los siguientes datos:'));
-    prompts(questions)
-      .then((response) => {
-        if (response.email && response.password) {
-          const msg = kleur.bold().italic('Registrando progreso');
-          /* start spinner animation */
-          const interval = createLoader(msg);
+  runTests()
+    .then((testsData) => {
+      console.log(kleur.bold().italic('Se terminó de correr los tests. A continuación completa los siguientes datos:'));
+      prompts(questions)
+        .then((response) => {
+          if (response.email && response.password) {
+            const msg = kleur.bold().italic('Registrando progreso');
+            /* start spinner animation */
+            const interval = createLoader(msg);
+            const progress = buildProgress(testsData);
 
-          getToken(response.email, response.password)
-            .then((token) => {
-              const {
-                unitId,
-                partId,
-                exerciseId,
-                typeContent,
-              } = laboratoria;
-
-              const bodyRequest = {
-                unitId,
-                partId,
-                exerciseId,
-                type: typeContent,
-                preworkType: 'redesign-prework-fe',
-                progress: {
-                  testResults: {
-                    ...testsData,
-                  },
-                  updatedAt: new Date(),
-                  /* Add completedAt property only if tests passed
-                    to save in BigQuery */
-                  ...(testsData.state === 'PASS' && { completedAt: new Date() }),
-                },
-              };
-              return sendProgressToApi(bodyRequest, token);
-            })
-            .then(() => {
-              console.log(kleur.green().bold('Listo! Tu progreso ha sido guardado de forma exitosa.'));
-            })
-            .catch((err) => console.log(kleur.red().bold(err.message)))
-            .finally(() => {
-              /* stop spinner animation */
-              clearInterval(interval);
-            });
-        }
-      });
-  });
+            getToken(response.email, response.password)
+              .then((token) => sendProgressToApi(progress, token))
+              .then(() => {
+                console.log(kleur.green().bold('Listo! Tu progreso ha sido guardado de forma exitosa.'));
+              })
+              .catch((err) => console.log(kleur.red().bold(err.message)))
+              .finally(() => {
+                /* stop spinner animation */
+                clearInterval(interval);
+              });
+          }
+        });
+    });
 }
 
 main();
