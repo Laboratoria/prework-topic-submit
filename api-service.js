@@ -20,4 +20,25 @@ const getToken = (email, password) => {
     });
 };
 
-module.exports = getToken;
+const sendProgressToApi = (data, token) => fetch('https://laboratoria-la-staging.web.app/dashboards/redesign-prework-fe', {
+  method: 'PUT',
+  body: JSON.stringify(data),
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  },
+})
+  .then((res) => res.json())
+  .then((json) => {
+    if (json.statusCode !== 204) {
+      throw new Error(json.message);
+    }
+  })
+  .catch((err) => {
+    throw new Error(`Hubo un error al guardar el progreso. Vuelve a intentarlo. ${err}`);
+  });
+
+module.exports = {
+  getToken,
+  sendProgressToApi,
+};

@@ -9,7 +9,7 @@ const validator = require('email-validator');
 const { laboratoria } = require(path.join(process.cwd(), 'package.json'));
 const runTests = require('./runTests');
 const { createLoader } = require('./utils');
-const getToken = require('./api-service');
+const { getToken, sendProgressToApi } = require('./api-service');
 
 const questions = [
   {
@@ -46,7 +46,6 @@ function main() {
 
           getToken(response.email, response.password)
             .then((token) => {
-              console.log('TOKEN', token);
               const {
                 unitId,
                 partId,
@@ -59,6 +58,7 @@ function main() {
                 partId,
                 exerciseId,
                 type: typeContent,
+                preworkType: 'redesign-prework-fe',
                 progress: {
                   testResults: {
                     ...testsData,
@@ -69,8 +69,10 @@ function main() {
                   ...(testsData.state === 'PASS' && { completedAt: new Date() }),
                 },
               };
-              console.log('body request: ', bodyRequest);
-              console.log(kleur.green().bold('Listo!'));
+              return sendProgressToApi(bodyRequest, token);
+            })
+            .then(() => {
+              console.log(kleur.green().bold('Listo! Tu progreso ha sido guardado de forma exitosa.'));
             })
             .catch((err) => console.log(kleur.red().bold(err.message)))
             .finally(() => {
