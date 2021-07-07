@@ -2,7 +2,7 @@ const { spawn } = require('child_process');
 const kleur = require('kleur');
 const { createLoader } = require('./utils');
 
-const runTests = (callback) => {
+const runTests = () => {
   const testsData = {
     state: null, // string: 'PASS' OR 'FAIL'
     stats: {
@@ -47,7 +47,7 @@ const runTests = (callback) => {
     const msg = kleur.bold().italic('Corriendo tests');
     interval = createLoader(msg);
     testsData.stats.start = new Date();
-    console.log(`${data}`);
+    return console.log(`${data}`);
   });
 
   child.stderr.on('data', (data) => {
@@ -55,7 +55,8 @@ const runTests = (callback) => {
     const outputText = data.toString().replace(/ /g, '');
     if (outputText.includes('PASS') || outputText.includes('FAIL')) {
       testsData.state = outputText.slice(0, 4);
-    } else if (outputText.includes('TestSuites:')) {
+    }
+    if (outputText.includes('TestSuites:')) {
       testsData.stats = {
         ...testsData.stats,
         ...calculateTestsStats(outputText),
@@ -63,10 +64,12 @@ const runTests = (callback) => {
     }
   });
 
-  return child.on('close', () => {
-    testsData.stats.end = new Date();
-    clearInterval(interval);
-    callback(testsData);
+  return new Promise((resolve) => {
+    child.on('close', () => {
+      testsData.stats.end = new Date();
+      clearInterval(interval);
+      resolve(testsData);
+    });
   });
 };
 
