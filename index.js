@@ -76,8 +76,8 @@ function main() {
 
             getToken(response.email, response.password)
               .then((token) => sendProgressToApi(progress, token))
-              .then(() => {
-                console.log(kleur.green().bold('Listo! Tu progreso ha sido guardado de forma exitosa.'));
+              .then((successMessage) => {
+                console.log(kleur.green().bold(successMessage));
               })
               .catch((err) => console.log(kleur.red().bold(err.message)))
               .finally(() => {

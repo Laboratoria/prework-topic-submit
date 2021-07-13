@@ -33,6 +33,7 @@ const sendProgressToApi = (data, token) => fetch('https://laboratoria-la-staging
     if (json.statusCode !== 204) {
       throw new Error(json.message);
     }
+    return 'Listo! Tu progreso ha sido guardado de forma exitosa.';
   })
   .catch((err) => {
     throw new Error(`Hubo un error al guardar el progreso. Vuelve a intentarlo. ${err}`);
