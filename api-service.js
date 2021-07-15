@@ -1,12 +1,14 @@
 const fetch = require('node-fetch');
 
+const urlAPI = process.env.URL_API || 'http://localhost:5000/auth';
+
 const getToken = (email, password) => {
   const body = { email, password };
   const errorMessages = {
     404: `No se encontró ningún usuario con email: ${email}`,
     400: 'Contraseña inválida',
   };
-  return fetch('https://laboratoria-la-staging.web.app/auth', {
+  return fetch(`${urlAPI}/auth`, {
     method: 'post',
     body: JSON.stringify(body),
     headers: { 'Content-Type': 'application/json' },
@@ -20,7 +22,7 @@ const getToken = (email, password) => {
     });
 };
 
-const sendProgressToApi = (data, token) => fetch('https://laboratoria-la-staging.web.app/dashboards/redesign-prework-fe', {
+const sendProgressToApi = (data, token) => fetch(`${urlAPI}/dashboards/redesign-prework-fe`, {
   method: 'PUT',
   body: JSON.stringify(data),
   headers: {
