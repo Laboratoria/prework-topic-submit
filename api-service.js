@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-const urlAPI = process.env.URL_API || 'http://localhost:5000/auth';
+const urlAPI = process.env.URL_API || 'http://localhost:5000';
 
 const getToken = (email, password) => {
   const body = { email, password };
@@ -30,9 +30,8 @@ const sendProgressToApi = (data, token) => fetch(`${urlAPI}/dashboards/redesign-
     Authorization: `Bearer ${token}`,
   },
 })
-  .then((res) => res.json())
   .then((json) => {
-    if (json.statusCode !== 204) {
+    if (json.status !== 204) {
       throw new Error(json.message);
     }
     return 'Listo! Tu progreso ha sido guardado de forma exitosa.';

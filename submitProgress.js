@@ -27,6 +27,7 @@ const questions = [
 
 const buildProgress = (testsData) => {
   const {
+    courseId,
     unitId,
     partId,
     exerciseId,
@@ -34,6 +35,7 @@ const buildProgress = (testsData) => {
   } = laboratoria;
 
   const progressData = {
+    courseId,
     unitId,
     partId,
     exerciseId,
@@ -57,7 +59,6 @@ function submitProgress() {
   console.log(kleur.bold().italic('A continuación completa los siguientes datos:'));
   return prompts(questions)
     .then((response) => {
-      console.log('response', response);
       if (response.email && response.password) {
         let interval;
         return getToken(response.email, response.password)
