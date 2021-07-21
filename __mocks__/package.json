@@ -1,5 +1,6 @@
 {
   "laboratoria": {
+    "courseId": "admission",
     "unitId": "03-prework",
     "partId": "06-js-basics",
     "exerciseId": "02-data-types-numbers",
