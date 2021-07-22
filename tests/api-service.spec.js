@@ -68,12 +68,12 @@ describe('sendProgressToApi', () => {
       completedAt: '2021-06-23T17:51:43.377Z',
     },
   };
-  const fakeError404 = JSON.stringify({ statusCode: 404, message: 'not found cohort membership' });
-  const fakeSuccessResponse = JSON.stringify({ statusCode: 204 });
+  const fakeError404 = { status: 404, message: 'not found cohort membership' };
+  const fakeSuccessResponse = { status: 204 };
 
   fetch
-    .mockReturnValueOnce(Promise.resolve(new Response(fakeSuccessResponse)))
-    .mockReturnValueOnce(Promise.resolve(new Response(fakeError404)));
+    .mockReturnValueOnce(Promise.resolve(fakeSuccessResponse))
+    .mockReturnValueOnce(Promise.resolve(fakeError404));
 
   it('Should be return a success message', (done) => sendProgressToApi(bodyRequest, fakeToken)
     .then((resp) => {

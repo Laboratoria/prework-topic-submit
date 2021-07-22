@@ -24,6 +24,7 @@ describe('buildProgress', () => {
       },
     };
     const fakeProgressData = {
+      courseId: 'admission-redesign-fe',
       unitId: '03-prework',
       partId: '06-js-basics',
       exerciseId: '02-data-types-numbers',
@@ -60,6 +61,7 @@ describe('buildProgress', () => {
       },
     };
     const fakeProgressData = {
+      courseId: 'admission-redesign-fe',
       unitId: '03-prework',
       partId: '06-js-basics',
       exerciseId: '02-data-types-numbers',
