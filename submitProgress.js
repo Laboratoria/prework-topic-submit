@@ -46,6 +46,7 @@ const buildProgress = (testsData) => {
         ...testsData,
       },
       updatedAt: new Date(),
+      code: 'no code',
       /* Add completedAt property only if tests passed
           to save in BigQuery */
       ...(testsData.state === 'PASS' && { completedAt: new Date() }),
