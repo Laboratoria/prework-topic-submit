@@ -32,6 +32,7 @@ describe('buildProgress', () => {
       preworkType: 'redesign-prework-fe',
       progress: {
         testResults: { ...fakeTestsData },
+        code: 'no code',
         updatedAt: '2021-06-23T17:51:43.377Z',
       },
     };
@@ -69,6 +70,7 @@ describe('buildProgress', () => {
       preworkType: 'redesign-prework-fe',
       progress: {
         testResults: { ...fakeTestsData },
+        code: 'no code',
         updatedAt: '2021-06-23T17:51:43.377Z',
         completedAt: '2021-06-23T17:51:43.377Z',
       },
